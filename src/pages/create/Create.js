@@ -3,6 +3,8 @@ import { useCollection } from '../../hooks/useCollection'
 import Select from 'react-select'
 import { timestamp } from '../../firebase/config'
 import { useAuthContext } from '../../hooks/useAuthContext'
+import { useFirestore } from '../../hooks/useFirestore'
+import { useNavigate } from 'react-router'
 
 // styles
 import './Create.css'
@@ -15,9 +17,11 @@ const categories = [
 ]
 
 export default function Create() {
+  const { addDocument, response } = useFirestore('projects')
   const { documents } = useCollection('users')
   const [users, setUsers] = useState([])
   const { user } = useAuthContext()
+  const navigate = useNavigate()
 
   // form field values
   const [name, setName] = useState('')
@@ -75,7 +79,10 @@ export default function Create() {
     assignedUsersList 
   }
 
-    console.log(project, assignedUsers)
+    await addDocument(project)
+    if (!response.error) {
+      navigate('/')
+    }
   }
 
   return (
