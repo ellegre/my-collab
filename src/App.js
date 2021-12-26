@@ -42,12 +42,12 @@ const { user, authIsReady } = useAuthContext()
               />
               <Route 
                 path="/create" 
-                element={(!user && <Navigate to="login" />) || (user && <Create />)}  
+                element={(user && <Create />) || (!user && <Navigate to="/login" />) }  
               />
     
               <Route 
                 path="/projects/:id" 
-                element={(!user && <Navigate to="login" />) || (user && <Project />)}  
+                element={ (user && <Project />) || (!user && <Navigate to="/login" />)}  
               />
 
             </Routes>        

@@ -4,6 +4,10 @@
   align-items: start;
   grid-gap: 60px;
 }
+.project-category {
+  font-size: 0.7em;
+  margin-bottom: 10px;
+}
 
 /* project summary */
 .project-summary {
@@ -79,7 +83,7 @@
 }
 .comment-date {
   color: var(--text-color);
-  font-size: 0.9em;
+  font-size: 0.6em;
   margin: 4px 0 10px;
 }
 .comment-content {
