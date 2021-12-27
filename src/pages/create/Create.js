@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import Select from 'react-select'
 import { useCollection } from '../../hooks/useCollection'
+import Select from 'react-select'
 import { timestamp } from '../../firebase/config'
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { useFirestore } from '../../hooks/useFirestore'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 // styles
 import './Create.css'
@@ -17,11 +17,11 @@ const categories = [
 ]
 
 export default function Create() {
-  const navigate = useNavigate()
   const { addDocument, response } = useFirestore('projects')
   const { documents } = useCollection('users')
   const [users, setUsers] = useState([])
   const { user } = useAuthContext()
+  const navigate = useNavigate()
 
   // form field values
   const [name, setName] = useState('')
@@ -31,53 +31,54 @@ export default function Create() {
   const [assignedUsers, setAssignedUsers] = useState([])
   const [formError, setFormError] = useState(null)
 
+  // create user values for react-select
   useEffect(() => {
     if(documents) {
       const options = documents.map(user => {
-        return {
-          value: user,
-          label: user.displayName
-        }
+        return { value: user, label: user.displayName }
       })
       setUsers(options)
     }
-
   }, [documents])
+  // console.log(users)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setFormError(null)
 
     if(!category) {
-      setFormError('Please select category')
+      setFormError('Please select a project category')
       return
     }
-    if(assignedUsers.length < 1) {
-      setFormError('Please assign the project to at least 1 user')
+    if (assignedUsers.length < 1) {
+      setFormError('Please assign the project to at least 1 users')
       return
     }
+  
+  const createdBy = {
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    id: user.uid
+  }
 
-    const createdBy = {
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      id: user.uid
+  const assignedUsersList = assignedUsers.map((u) => {
+    return {
+      displayName: u.value.displayName,
+      photoURL: u.value.photoURL,
+      id: u.value.id
     }
-    const assignedUserList = assignedUsers.map((u) => {
-      return {
-        dispalyName: u.value.displayName,
-        photoURL: u.value.photoURL,
-        id: u.value.id
-      }
-    })
+  })
+  
+  const project = {
+    name,
+    details,
+    category: category.value,
+    dueDate: timestamp.fromDate(new Date(dueDate)),
+    comments: [],
+    createdBy,
+    assignedUsersList 
+  }
 
-    const project = {
-      name,
-      details,
-      category: category.value,
-      dueDate: timestamp.fromDate(new Date(dueDate)),
-      comments: [],
-      createdBy
-    }
     await addDocument(project)
     if (!response.error) {
       navigate('/')
@@ -86,32 +87,31 @@ export default function Create() {
 
   return (
     <div className="create-form">
-      <h2 className="page-title">Create a new project</h2>
+      <h2 className="page-title">Create a new Project</h2>
       <form onSubmit={handleSubmit}>
         <label>
           <span>Project name:</span>
           <input
-            required
-            type="text"
+            required 
+            type="text" 
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
         </label>
         <label>
-          <span>Project datails:</span>
-          <textarea
+          <span>Project Details:</span>
+          <textarea 
             required
-            type="text"
             onChange={(e) => setDetails(e.target.value)}
-            value={details}
-          />
+            value={details} 
+          ></textarea>
         </label>
         <label>
           <span>Set due date:</span>
           <input
-            required
-            type="date"
-            onChange={(e) => setDueDate(e.target.value)}
+            required 
+            type="date" 
+            onChange={(e) => setDueDate(e.target.value)} 
             value={dueDate}
           />
         </label>
@@ -130,7 +130,9 @@ export default function Create() {
             isMulti
           />
         </label>
+
         <button className="btn">Add Project</button>
+
         {formError && <p className="error">{formError}</p>}
       </form>
     </div>
