@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Avatar from '../../components/Avatar'
-import { projectStorage, timestamp } from '../../firebase/config'
+import { timestamp } from '../../firebase/config'
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { useFirestore } from '../../hooks/useFirestore'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
